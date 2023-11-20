@@ -1,0 +1,7 @@
+.navbar.bg-body-tertiary .navbar-brand {
+  color: white; /* Text color for the navbar brand */
+}
+
+.nav-links .nav-item a {
+  color: white !important; /* Text color for the navbar links */
+}

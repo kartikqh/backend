@@ -1,0 +1,82 @@
+body, h1, h2, h3, p, ul, li {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+background-color: #f4f4f4;
+}
+
+.navbar {
+background-color: #464d53;
+}
+
+.navbar-brand {
+color: white;
+font-size: 24px;
+}
+
+.navbar .nav-link {
+color: white;
+}
+
+
+form {
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.dash {
+background-color: #464d53;
+color: white;
+text-align: center;
+padding: 100px;
+padding-bottom: 150px;
+}
+
+.hd {
+text-align: center;
+padding: 100px;
+}
+
+.hd h1 {
+font-weight: bold;
+}
+
+.hd h4 {
+font-weight: lighter;
+}
+
+.hd p {
+color: #888;
+}
