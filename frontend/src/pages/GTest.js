@@ -28,6 +28,8 @@ function GTest() {
   const [age, setAge] = useState("");
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedSlot, setSelectedSlot] = useState('');
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -50,7 +52,8 @@ function GTest() {
             setModel(data?.data?.carDetails?.model)
             setYear(data?.data?.carDetails?.year)
             setIntialLicenseNumber(data?.data?.licenseNumber)}
-            
+            setSelectedDate(data?.data?.appointment_id?.date)
+            setSelectedSlot(data?.data?.appointment_id)
 
         }, 
         (err) => {
@@ -131,6 +134,23 @@ function GTest() {
                         <input type="text" class="form-control" id="plateNumber" placeholder="Plate Number" value={plateNumber} onChange={(e) => setPlateNumber(e.target.value)}/>
                     </div>
                 </div>
+            </div>
+
+            <div class="form-group">
+                <h2>Booking Detils:</h2>
+                <div class="form-row">
+                <div class="form-group">
+                <label for="dob">Booking Date:</label>
+                <input type="date" class="form-control" id="dob" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}/>
+                </div>
+                <div class="form-group">
+                <label for="dob">Booking Slot:</label>
+                <labe>{selectedSlot.time}</labe>
+                </div>
+            </div>
+                    
+                    
+                    
             </div>
 
         </form>

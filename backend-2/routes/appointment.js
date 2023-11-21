@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.post('/add/appointment', authAdmin,appointmentController.addAppointment);
 router.post('/slot/appointment', authAdmin,appointmentController.getAvailiableSlots);
+router.post('/client/appointment', auth,appointmentController.getAvailiableSlotsClient);
 
 
 

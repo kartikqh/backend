@@ -8,23 +8,24 @@ import { useDispatch } from 'react-redux';
 import { GetCar , getAvailableSlotsForDate , SubmitAppointment} from '../action'
 
 function Appointment() {
+  const getFormattedDate = (dateObject) => {
+    const day = dateObject.getDate().toString().padStart(2, '0'); // Get day and pad with leading zero if needed
+    const month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-based, hence adding 1
+    const year = dateObject.getFullYear();
+  
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate
+    }
   const navigate = useNavigate();
   const [userType, setUserType] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(getFormattedDate(new Date()));
   const [availableSlots, setAvailableSlots] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   
   // Function to convert the selectedDate string to a Date object
-  const getFormattedDate = (dateObject) => {
-    const day = dateObject.getDate().toString().padStart(2, '0'); // Get day and pad with leading zero if needed
-    const month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-based, hence adding 1
-    const year = dateObject.getFullYear();
-  
-    const formattedDate = `${day}/${month}/${year}`;
-    return formattedDate
-    }
+
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
@@ -57,7 +58,7 @@ useEffect(() => {
 const getAvailableSlots = async () => {
   try {
     const payload={
-      date: getFormattedDate(selectedDate)
+      date: getFormattedDate(new Date(selectedDate))
     }
     dispatch(
       getAvailableSlotsForDate(payload, (data) => {
@@ -84,7 +85,9 @@ const getAvailableSlots = async () => {
 };
 
 const handleDateChange = (date) => {
-  if (date >= new Date()){
+  console.log(date)
+  if (new Date(date) >= new Date()){
+
     setSelectedDate(date);
   }
   else{
@@ -97,7 +100,7 @@ const addSlot = async (time) => {
   try {
     const id = localStorage.getItem('access_token')
   const payload={
-    date: getFormattedDate(selectedDate),
+    date: getFormattedDate(new Date(selectedDate)),
     time: time
   }
   setLoading(true);
@@ -179,11 +182,11 @@ const handleLogout=(e) => {
   <div style={{ marginBottom: '20px' }}>
     {/* Calendar component for date selection */}
     {/* Date picker library or your own implementation */}
-    <input type="date" value={selectedDate} onChange={(e) => handleDateChange(new Date(e.target.value))} style={{ marginBottom: '10px' }} />
+    <input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} style={{ marginBottom: '10px' }} />
   </div>
 
   <div>
-    <h5 style={{ marginBottom: '10px' }}>Add Slots for {getFormattedDate(selectedDate)} from 9 AM to 2 PM</h5>
+    <h5 style={{ marginBottom: '10px' }}>Add Slots for {getFormattedDate(new Date(selectedDate))} from 9 AM to 2 PM</h5>
     {loading ? (
       <p>Loading...</p>
     ) : (

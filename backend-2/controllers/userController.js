@@ -1,7 +1,9 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const Appointment = require('../models/appointment');
 const userController = {
   signUp: async (req, res) => {
     try {
@@ -59,7 +61,7 @@ const userController = {
     try {
         
         if (req.user) {
-          const user= await User.findById(req.user._id)
+          const user= await User.findById(req.user._id).populate("appointment_id")
           console.log(user)
           return res.json(user);
         } else {
@@ -79,15 +81,29 @@ const userController = {
         if (req.body.age < 18){
           return res.status(400).json({ error: 'Sorry Your age should be atleast 18 years.' }); 
         }
+        const appointment=await Appointment.updateOne({_id: new mongoose.Types.ObjectId(req.body.appointment_id)}, {
+          $set:{
+            isTimeAvailable: false
+          }
+        })
+        console.log(appointment._id,req.user.appointment_id)
+        if(appointment._id !== new mongoose.Types.ObjectId(req.user.appointment_id)){
+          await Appointment.updateOne({_id: new mongoose.Types.ObjectId(req.user.appointment_id)}, {
+            $set:{
+              isTimeAvailable: true
+            }
+          })
+        }
         const updatedUser = await User.findByIdAndUpdate(
           req.user._id,
           req.body,
           { new: true }
         );
         
+        
         return res.status(200).json(updatedUser);
       } catch (error) {
-  
+        console.log(error)
         return res.status(500).json({ error: 'Server error.' });
       }
   }

@@ -114,3 +114,20 @@ export const SubmitAppointment = (payload, callBack, errorCallback,manualToken) 
 };
 
 
+export const getAvailableSlotsForDateClient = (payload,callBack, errorCallback,manualToken) => {
+    return (dispatch) => {
+        postAPI(
+            endPoints.GET_SLOTS_CLIENT,
+            payload,
+            (response) => {
+                console.log('Response For Get Slots', response);
+                callBack(response);
+            },
+            (error) => {
+                console.log('Error While Fetching Slots', error);
+                errorCallback(error)
+            },
+            manualToken
+        );
+    };
+};

@@ -1,6 +1,5 @@
 const Appointment = require('../models/appointment');
 const bcrypt = require('bcrypt');
-
 const jwt = require('jsonwebtoken')
 const userController = {
     addAppointment: async(req, res)=>{
@@ -105,6 +104,21 @@ const userController = {
             res.status(500).json({ error: 'Server error' });
           }
     },
+    getAvailiableSlotsClient:async(req, res)=>{
+        try{
+            console.log(req.body)
+            const date = req.body.date;
+            const existingAppointment = await Appointment.find({date, isAdded: true, isTimeAvailable: true});
+            console.log(existingAppointment)
+            if (existingAppointment.length) {
+                return res.status(200).json(existingAppointment);
+              }
+              return res.status(400).json('No Slots Added by Admin');
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Server error' });
+          }
+    },
     };
 
-module.exports = userController;
+    module.exports = userController;
