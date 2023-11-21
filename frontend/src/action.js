@@ -77,11 +77,11 @@ export const GetCar = (payload, callBack, errorCallback,manualToken) => {
 };
 
 
-export const getAvailableSlotsForDate = (callBack, errorCallback,manualToken) => {
+export const getAvailableSlotsForDate = (payload,callBack, errorCallback,manualToken) => {
     return (dispatch) => {
-        getAPI(
+        postAPI(
             endPoints.GET_SLOTS_ADMIN,
-            
+            payload,
             (response) => {
                 console.log('Response For Get Slots', response);
                 callBack(response);

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { navigateTo } from '../utils/common';
 import { enqueueSnackbar } from 'notistack';
 import { useDispatch } from 'react-redux';
-import { GetCar , getAvailableSlotsForDate } from '../action'
+import { GetCar , getAvailableSlotsForDate , SubmitAppointment} from '../action'
 
 function Appointment() {
   const navigate = useNavigate();
@@ -16,6 +16,15 @@ function Appointment() {
 
   const dispatch = useDispatch();
   
+  // Function to convert the selectedDate string to a Date object
+  const getFormattedDate = (dateObject) => {
+    const day = dateObject.getDate().toString().padStart(2, '0'); // Get day and pad with leading zero if needed
+    const month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-based, hence adding 1
+    const year = dateObject.getFullYear();
+  
+    const formattedDate = `${day}/${month}/${year}`;
+    return formattedDate
+    }
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
@@ -47,8 +56,25 @@ useEffect(() => {
 
 const getAvailableSlots = async () => {
   try {
-     // API call to fetch slots
-    setAvailableSlots(slots);
+    const payload={
+      date: getFormattedDate(selectedDate)
+    }
+    dispatch(
+      getAvailableSlotsForDate(payload, (data) => {
+          setLoading(false)
+
+          setAvailableSlots(data?.data);
+          navigateTo(navigate, "/admin");
+  
+      }, (err) => {
+          console.log(err)
+          enqueueSnackbar(err?.response?.data?.error, { variant: 'error' })
+      },
+      localStorage.getItem("access_token")
+      )
+  )
+
+    
   } catch (error) {
     // Handle error fetching available slots
     console.error('Error fetching available slots:', error);
@@ -58,22 +84,30 @@ const getAvailableSlots = async () => {
 };
 
 const handleDateChange = (date) => {
-  setSelectedDate(date);
+  if (date >= new Date()){
+    setSelectedDate(date);
+  }
+  else{
+    enqueueSnackbar('Please select current or upcoming date', { variant: 'error' })
+  }
+  
 };
 
 const addSlot = async (time) => {
   try {
-    e.preventDefault();
     const id = localStorage.getItem('access_token')
   const payload={
-    date: selectedDate,
+    date: getFormattedDate(selectedDate),
     time: time
   }
   setLoading(true);
+
   dispatch(
     SubmitAppointment(payload, (data) => {
         setLoading(false)
-        enqueueSnackbar("Details Added Successfully", { variant: 'success' })
+        getAvailableSlots();
+        navigateTo(navigate, "/admin");
+        enqueueSnackbar("slot Added Successfully", { variant: 'success' })
         navigateTo(navigate, "/admin");
 
     }, (err) => {
@@ -82,8 +116,10 @@ const addSlot = async (time) => {
     },
     localStorage.getItem("access_token")
     )
-)// API call to add appointment slot
-    getAvailableSlots(); // Refresh available slots after adding
+    
+  )
+  
+
   } catch (error) {
     // Handle error adding appointment slot
     console.error('Error adding appointment slot:', error);
@@ -137,35 +173,38 @@ const handleLogout=(e) => {
             </div>
         </nav>
 
-        <div className="container">
-        <h2>Appointment View</h2>
-        <div>
-          {/* Calendar component for date selection */}
-          {/* Date picker library or your own implementation */}
-          <input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} />
-        </div>
-        <div>
-          <h3>Available Slots for {selectedDate.toDateString()}</h3>
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <ul>
-              {availableSlots.map((slot) => (
-                <li key={slot.id}>
-                  {slot.time}{' '}
-                  <button disabled={!slot.isTimeAvailable} onClick={() => addSlot(slot.time)}>
-                    Add Slot
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
+        <div className="container" style={{ margin: '20px', padding: '20px', border: '1px solid #ccc' }}>
+  <h2>Appointment View</h2>
+  
+  <div style={{ marginBottom: '20px' }}>
+    {/* Calendar component for date selection */}
+    {/* Date picker library or your own implementation */}
+    <input type="date" value={selectedDate} onChange={(e) => handleDateChange(new Date(e.target.value))} style={{ marginBottom: '10px' }} />
+  </div>
+
+  <div>
+    <h5 style={{ marginBottom: '10px' }}>Add Slots for {getFormattedDate(selectedDate)} from 9 AM to 2 PM</h5>
+    {loading ? (
+      <p>Loading...</p>
+    ) : (
+      <ul>
+        {availableSlots.map((slot) => (
+          <li key={slot.id} style={{ marginBottom: '5px' }}>
+            {slot.time}{' '}
+            <button disabled={slot.isAdded} onClick={() => addSlot(slot.time)} style={{ marginLeft: '10px' }}>
+              Add Slot
+            </button>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</div>
+
 
     </>
 
   )
-}
+};
 
 export default Appointment
