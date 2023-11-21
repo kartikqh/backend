@@ -7,10 +7,11 @@ const userController = {
         try {
             const { date, time } = req.body;
             const existingAppointment = await Appointment.findOne({ date, time });
-            if (existingAppointment.isAdded) {
+            console.log(existingAppointment)
+            if (existingAppointment && existingAppointment.isAdded) {
               return res.status(400).json({ error: 'Appointment slot already exists' });
             }
-            const newAppointment = await Appointment.update({ date, time},{$set:{ isTimeSlotAvailable: true , isAdded: true}});
+            const newAppointment = await Appointment.updateOne({ date, time},{$set:{ isTimeAvailable: true , isAdded: true}});
             res.status(201).json(newAppointment);
           } catch (err) {
             console.error(err);
@@ -20,80 +21,82 @@ const userController = {
 
     getAvailiableSlots: async(req, res)=>{
         try{
-            const selectedDate = req.body.selectedDate;
-            const existingAppointment = await Appointment.find({ date});
-            if (existingAppointment) {
+            console.log(req.body)
+            const date = req.body.date;
+            const existingAppointment = await Appointment.find({date});
+            console.log(existingAppointment)
+            if (existingAppointment.length) {
                 return res.status(200).json(existingAppointment);
               }
                 const appointment= [{
                     id: '1',
-                    date: selectedDate,
+                    date: date,
                     time: '09:00',
                     isTimeAvailable: false,
                     isAdded: false
                 },{
                     id: '2',
-                    date: selectedDate,
+                    date: date,
                     time: '09:30',
                     isTimeAvailable: false,
                     isAdded: false
                 },{
                     id: '3',
                     time: '10:00',
-                    date: selectedDate,
+                    date: date,
                     isTimeAvailable: false,
                     isAdded: false
                 },{
                     id: '4',
                     time: '10:30',
-                    date: selectedDate,
+                    date: date,
                     isTimeAvailable: false,
                     isAdded: false
                 },{
                     id: '5',
                     time: '11:00',
-                    date: selectedDate,
+                    date: date,
                     isTimeAvailable: false,
                     isAdded: false
                 },
                 {
                     id: '6',
                     time: '11:30',
-                    date: selectedDate,
+                    date: date,
                     isTimeAvailable: false,
                     isAdded: false
                 },{
                     id: '7',
                     time: '12:00',
-                    date: selectedDate,
+                    date: date,
                     isTimeAvailable: false,
                     isAdded: false
                 },{
                     id: '8',
                     time: '12:30',
-                    date: selectedDate,
+                    date: date,
                     isTimeAvailable: false,
                     isAdded: false
                 },{
                     id: '9',
                     time: '01:00',
-                    date: selectedDate,
+                    date: date,
                     isTimeAvailable: false,
                     isAdded: false
                 },{
                     id: '10',
                     time: '01:30',
-                    date: selectedDate,
+                    date: date,
                     isTimeAvailable: false,
                     isAdded: false
                 },
                 {
                     id: '11',
                     time: '02:00',
-                    date: selectedDate,
+                    date: date,
                     isTimeAvailable: false,
                     isAdded: false
-                },]
+                }]
                 await Appointment.insertMany(appointment)
                 return res.status(200).json(appointment);
 

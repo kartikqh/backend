@@ -5,8 +5,15 @@ const appointmentSchema = new mongoose.Schema({
     id: String,
     date: String,
     time: String,
-    isTimeSlotAvailable: Boolean,
-    isAdded:Boolean
+    isTimeAvailable: {
+      type: Boolean,
+      default: false
+    },
+    isAdded:{
+      type: Boolean,
+      default: false
+    },
 
   });
-  const Appointment = mongoose.model('Appointment', appointmentSchema);
+  module.exports = mongoose.model('Appointment', appointmentSchema);
+

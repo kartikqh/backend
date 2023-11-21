@@ -6,7 +6,7 @@ const commonAuth = require('../middleware/commonAuth')
 const router = express.Router();
 
 router.post('/add/appointment', authAdmin,appointmentController.addAppointment);
-router.get('/slot/appointment', authAdmin,appointmentController.getAvailiableSlots);
+router.post('/slot/appointment', authAdmin,appointmentController.getAvailiableSlots);
 
 
 
