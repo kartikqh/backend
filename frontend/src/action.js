@@ -76,3 +76,41 @@ export const GetCar = (payload, callBack, errorCallback,manualToken) => {
     };
 };
 
+
+export const getAvailableSlotsForDate = (callBack, errorCallback,manualToken) => {
+    return (dispatch) => {
+        getAPI(
+            endPoints.GET_SLOTS_ADMIN,
+            
+            (response) => {
+                console.log('Response For Get Slots', response);
+                callBack(response);
+            },
+            (error) => {
+                console.log('Error While Fetching Slots', error);
+                errorCallback(error)
+            },
+            manualToken
+        );
+    };
+};
+
+export const SubmitAppointment = (payload, callBack, errorCallback,manualToken) => {
+    return (dispatch) => {
+        postAPI(
+            endPoints.SUBMIT_APPOINTMENT,
+            payload,
+            (response) => {
+                console.log('Response For Post Slots', response);
+                callBack(response);
+            },
+            (error) => {
+                console.log('Error While Post Slots', error);
+                errorCallback(error)
+            },
+            manualToken
+        );
+    };
+};
+
+

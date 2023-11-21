@@ -5,12 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { navigateTo } from '../utils/common';
 import { enqueueSnackbar } from 'notistack';
 import { useDispatch } from 'react-redux';
-import { GetCar , SubmitCar} from '../action'
+import { GetCar , getAvailableSlotsForDate } from '../action'
 
 function Appointment() {
   const navigate = useNavigate();
   const [userType, setUserType] = useState("");
-
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   
@@ -23,12 +25,10 @@ function Appointment() {
         setUserType(data?.data?.userType)
         if(data?.data?.licenseNumber.length <= 0 && userType === "driver"){
             navigateTo(navigate, "/gtest2");
-        }else
+        }else if(userType === "driver")
         {
-          navigateTo(navigate, "/admin");
+          navigateTo(navigate, "/gtest");
       }
-        
-
     }, 
     (err) => {
         enqueueSnackbar("Error While Login", { variant: 'error' })
@@ -36,15 +36,66 @@ function Appointment() {
     localStorage.getItem("access_token")
     )
       )
+      
     }
 }, [])
 
-  
+useEffect(() => {
+  setLoading(true);
+  getAvailableSlots(); // Function to fetch available slots for the selected date
+}, [selectedDate]);
+
+const getAvailableSlots = async () => {
+  try {
+     // API call to fetch slots
+    setAvailableSlots(slots);
+  } catch (error) {
+    // Handle error fetching available slots
+    console.error('Error fetching available slots:', error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handleDateChange = (date) => {
+  setSelectedDate(date);
+};
+
+const addSlot = async (time) => {
+  try {
+    e.preventDefault();
+    const id = localStorage.getItem('access_token')
+  const payload={
+    date: selectedDate,
+    time: time
+  }
+  setLoading(true);
+  dispatch(
+    SubmitAppointment(payload, (data) => {
+        setLoading(false)
+        enqueueSnackbar("Details Added Successfully", { variant: 'success' })
+        navigateTo(navigate, "/admin");
+
+    }, (err) => {
+        console.log(err)
+        enqueueSnackbar(err?.response?.data?.error, { variant: 'error' })
+    },
+    localStorage.getItem("access_token")
+    )
+)// API call to add appointment slot
+    getAvailableSlots(); // Refresh available slots after adding
+  } catch (error) {
+    // Handle error adding appointment slot
+    console.error('Error adding appointment slot:', error);
+  }
+};
   
 const handleLogout=(e) => {
   localStorage.removeItem("access_token");
   navigateTo(navigate, "/");
 }
+
+
 
   return (
       <>
@@ -86,9 +137,31 @@ const handleLogout=(e) => {
             </div>
         </nav>
 
-        <div class="dash">
-            <h1>Appointment</h1>
+        <div className="container">
+        <h2>Appointment View</h2>
+        <div>
+          {/* Calendar component for date selection */}
+          {/* Date picker library or your own implementation */}
+          <input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} />
         </div>
+        <div>
+          <h3>Available Slots for {selectedDate.toDateString()}</h3>
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <ul>
+              {availableSlots.map((slot) => (
+                <li key={slot.id}>
+                  {slot.time}{' '}
+                  <button disabled={!slot.isTimeAvailable} onClick={() => addSlot(slot.time)}>
+                    Add Slot
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
 
     </>
 
