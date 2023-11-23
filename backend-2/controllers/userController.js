@@ -7,6 +7,10 @@ const Appointment = require('../models/appointment');
 const userController = {
   signUp: async (req, res) => {
     try {
+      const adminUser = await userModel.findOne({ userType: "Admin" });
+      if(adminUser && req.body.userType==="Admin"){
+        return res.status(400).json({ error:'Admin user already exist' });
+      } 
       if (!req.body.userName || !req.body.password) {
         return res.status(400).json({ error: 'User Cannot be created' });
       }
