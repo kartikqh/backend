@@ -106,7 +106,7 @@ function GTest2() {
             setIntialLicenseNumber(data?.data?.licenseNumber)
             setSelectedDate(data?.data?.appointment_id?.date)
             setSelectedSlot(data?.data?.appointment_id)
-            
+            getAvailableSlots()
 
         }, 
         (err) => {
