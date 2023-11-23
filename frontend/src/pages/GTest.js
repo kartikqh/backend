@@ -137,17 +137,29 @@ function GTest() {
             </div>
 
             <div class="form-group">
-                <h2>Booking Detils:</h2>
-                <div class="form-row">
+                <h2>Booking Details:</h2>
                 <div class="form-group">
                 <label for="dob">Booking Date:</label>
-                <input type="date" class="form-control" id="dob" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}/>
+                { selectedDate?(
+                    <label>{selectedDate}</label>
+                )
+                :(
+                    <label>No time slot selected</label>
+                )
+
+                }
                 </div>
                 <div class="form-group">
                 <label for="dob">Booking Slot:</label>
-                <labe>{selectedSlot.time}</labe>
+                { selectedSlot?(
+                    <label>{selectedSlot.time}</label>
+                )
+                :(
+                    <label>No time was avaliable for this date</label>
+                )
+
+                }
                 </div>
-            </div>
                     
                     
                     
